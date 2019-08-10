@@ -165,6 +165,7 @@ int* hashMapGet(struct HashMap* map, const char* key)
  */
 void resizeTable(struct HashMap* map, int capacity)
 {
+    /*
     struct HashMap* newMap = hashMapNew(capacity);             //create new map with new capacity
     struct HashLink* ptr;                                      //Create hashLink pointer for transfer of data.
     for(int i = 0; i < map->capacity; i++){             //iterates through old map buckets
@@ -177,6 +178,27 @@ void resizeTable(struct HashMap* map, int capacity)
     map = newMap;                                       //Assign the resized Map to the map pointer.
     hashMapDelete(temp);                                 //delete old map.
     // FIXME: implement
+    */
+    struct HashLink **oldTable = map->table;
+    int oldTableSize = hashMapCapacity(map);
+    int i;
+    HashLink *curLink;
+    HashLink *prevLink;
+    hashMapInit(map, capacity);
+
+    for(i = 0; i < oldTableSize; i++) 
+	{
+            curLink = oldTable[i];
+            while(curLink != 0) 
+			{
+                hashMapPut(map, curLink->key, curLink->value);
+                prevLink = curLink;
+                curLink = curLink->next;
+                free(prevLink);
+            }
+    }
+
+    free(oldTable);
 }
 
 /**
